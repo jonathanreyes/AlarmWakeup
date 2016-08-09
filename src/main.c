@@ -15,7 +15,6 @@ static TextLayer *text_layer;
 static AppSync sync;
 
 static bool isConnected = false;
-static bool sleepModeState = false;
 static int syncChangeCount = 0;
 static uint8_t sync_buffer[SYNC_BUFFER_SIZE];
 
@@ -74,7 +73,7 @@ static void main_window_load(Window * window) {
   
   //Create text layer and set text
   text_layer = text_layer_create(GRect(0, PBL_IF_ROUND_ELSE(58, 52), bounds.size.w, 50));
-  text_layer_set_text(text_layer, "Alarm.Wakeup");
+  text_layer_set_text(text_layer, "Alarm.Wakeup is watching you sleep ;)");
   
   //Add text layer as child layer to window's root
   layer_add_child(window_layer, text_layer_get_layer(text_layer));
@@ -152,40 +151,40 @@ void accel_data_callback(void * data, uint32_t num_samples) {
   }
 }
 
-//callback for tap events.
-/*Tapping toggles sleep mode. When in sleep mode, we want to track the accelerometer*/
-void accel_tap_callback(AccelAxisType axis, uint32_t direction) {
-  //don't allow sleep mode to activate unless connected to a phone
-  if (!isConnected)
-    sleepModeState = false;
-  else
-    sleepModeState = !sleepModeState;
+// //callback for tap events.
+// /*Tapping toggles sleep mode. When in sleep mode, we want to track the accelerometer*/
+// void accel_tap_callback(AccelAxisType axis, uint32_t direction) {
+//   //don't allow sleep mode to activate unless connected to a phone
+//   if (!isConnected)
+//     sleepModeState = false;
+//   else
+//     sleepModeState = !sleepModeState;
   
-  if (sleepModeState) {
-    APP_LOG(APP_LOG_LEVEL_INFO, "start sleep mode");
+//   if (sleepModeState) {
+//     APP_LOG(APP_LOG_LEVEL_INFO, "start sleep mode");
     
-    //Register to receive accelerometer data
-    accel_data_service_subscribe(SAMPLES_PER_CALL_BACK, (AccelDataHandler) accel_data_callback);
+//     //Register to receive accelerometer data
+//     accel_data_service_subscribe(SAMPLES_PER_CALL_BACK, (AccelDataHandler) accel_data_callback);
     
-    text_layer_set_text(text_layer, "Sleep Mode: ON");
-  } else {
-    //unregister from receiving accelerometer data
-    accel_data_service_unsubscribe();
+//     text_layer_set_text(text_layer, "Sleep Mode: ON");
+//   } else {
+//     //unregister from receiving accelerometer data
+//     accel_data_service_unsubscribe();
     
-    APP_LOG(APP_LOG_LEVEL_INFO, "stop sleep mode");
-    APP_LOG(APP_LOG_LEVEL_INFO, "stats: sync_set:    %lu",
-            (unsigned long)syncStats.sync_set);
-    APP_LOG(APP_LOG_LEVEL_INFO, "stats: sync_vib:    %lu",
-            (unsigned long)syncStats.sync_vib);
-    APP_LOG(APP_LOG_LEVEL_INFO, "stats: sync_missed: %lu",
-            (unsigned long)syncStats.sync_missed);
-    syncStats.sync_set = 0;
-    syncStats.sync_vib = 0;
-    syncStats.sync_missed = 0;
+//     APP_LOG(APP_LOG_LEVEL_INFO, "stop sleep mode");
+//     APP_LOG(APP_LOG_LEVEL_INFO, "stats: sync_set:    %lu",
+//             (unsigned long)syncStats.sync_set);
+//     APP_LOG(APP_LOG_LEVEL_INFO, "stats: sync_vib:    %lu",
+//             (unsigned long)syncStats.sync_vib);
+//     APP_LOG(APP_LOG_LEVEL_INFO, "stats: sync_missed: %lu",
+//             (unsigned long)syncStats.sync_missed);
+//     syncStats.sync_set = 0;
+//     syncStats.sync_vib = 0;
+//     syncStats.sync_missed = 0;
     
-    text_layer_set_text(text_layer, "Sleep Mode: OFF");
-  }
-}
+//     text_layer_set_text(text_layer, "Sleep Mode: OFF");
+//   }
+// }
 
 void handle_init(void) {
   my_window = window_create();
@@ -196,9 +195,11 @@ void handle_init(void) {
   
   //Init Accelerometer
   accel_service_set_sampling_rate(SAMPLING_RATE);
-  accel_tap_service_subscribe((AccelTapHandler) accel_tap_callback);
+//   accel_tap_service_subscribe((AccelTapHandler) accel_tap_callback);
   app_message_open(SYNC_BUFFER_SIZE, SYNC_BUFFER_SIZE);
   
+  //Register to receive accelerometer data
+  accel_data_service_subscribe(SAMPLES_PER_CALL_BACK, (AccelDataHandler) accel_data_callback);
   
   //subscribe to Bluetooth status changes
   bluetooth_connection_service_subscribe(bluetooth_connection_callback);
@@ -207,9 +208,8 @@ void handle_init(void) {
 }
 
 void handle_deinit(void) {
-  //unsubscribe from accelerometer if deinit'ing during sleep mode
-  if (sleepModeState)
-    accel_data_service_unsubscribe();
+  //unsubscribe from accelerometer
+  accel_data_service_unsubscribe();
   
   window_destroy(my_window);
   APP_LOG(APP_LOG_LEVEL_INFO, "main: exit");
