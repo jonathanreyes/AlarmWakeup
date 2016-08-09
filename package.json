@@ -1,0 +1,28 @@
+{
+    "author": "jreyes@alarm.com",
+    "dependencies": {},
+    "keywords": [],
+    "name": "alarm.wakeup",
+    "pebble": {
+        "capabilities": [
+            ""
+        ],
+        "displayName": "Alarm.Wakeup",
+        "enableMultiJS": false,
+        "messageKeys": [],
+        "projectType": "native",
+        "resources": {
+            "media": []
+        },
+        "sdkVersion": "3",
+        "targetPlatforms": [
+            "aplite",
+            "basalt"
+        ],
+        "uuid": "f502255f-0527-467b-bf6d-fc493d35c094",
+        "watchapp": {
+            "watchface": false
+        }
+    },
+    "version": "1.0.0"
+}
