@@ -151,41 +151,6 @@ void accel_data_callback(void * data, uint32_t num_samples) {
   }
 }
 
-// //callback for tap events.
-// /*Tapping toggles sleep mode. When in sleep mode, we want to track the accelerometer*/
-// void accel_tap_callback(AccelAxisType axis, uint32_t direction) {
-//   //don't allow sleep mode to activate unless connected to a phone
-//   if (!isConnected)
-//     sleepModeState = false;
-//   else
-//     sleepModeState = !sleepModeState;
-  
-//   if (sleepModeState) {
-//     APP_LOG(APP_LOG_LEVEL_INFO, "start sleep mode");
-    
-//     //Register to receive accelerometer data
-//     accel_data_service_subscribe(SAMPLES_PER_CALL_BACK, (AccelDataHandler) accel_data_callback);
-    
-//     text_layer_set_text(text_layer, "Sleep Mode: ON");
-//   } else {
-//     //unregister from receiving accelerometer data
-//     accel_data_service_unsubscribe();
-    
-//     APP_LOG(APP_LOG_LEVEL_INFO, "stop sleep mode");
-//     APP_LOG(APP_LOG_LEVEL_INFO, "stats: sync_set:    %lu",
-//             (unsigned long)syncStats.sync_set);
-//     APP_LOG(APP_LOG_LEVEL_INFO, "stats: sync_vib:    %lu",
-//             (unsigned long)syncStats.sync_vib);
-//     APP_LOG(APP_LOG_LEVEL_INFO, "stats: sync_missed: %lu",
-//             (unsigned long)syncStats.sync_missed);
-//     syncStats.sync_set = 0;
-//     syncStats.sync_vib = 0;
-//     syncStats.sync_missed = 0;
-    
-//     text_layer_set_text(text_layer, "Sleep Mode: OFF");
-//   }
-// }
-
 void handle_init(void) {
   my_window = window_create();
   WindowHandlers handlers = {.load = main_window_load, .unload = main_window_unload };
